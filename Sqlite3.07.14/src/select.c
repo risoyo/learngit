@@ -1478,21 +1478,21 @@ static void generateColumnNames(
 **所有列名将是唯一的
 ** Only the column names are computed.  Column.zType, Column.zColl,
 ** and other fields of Column are zeroed.
-**只计算列名称。zType、zColl列和其他字段的列都被置零。
+**只计算列名称。zType列、zColl列和其余列都会置零。
 ** Return SQLITE_OK on success.  If a memory allocation error occurs,
 ** store NULL in *paCol and 0 in *pnCol and return SQLITE_NOMEM.
-**返回SQLITE_OK成功。如果内存分配发生错误,在*paCol里存储空，在*pnCol里存储0，返回SQLITE_NOMEM
+**成功时返回SQLITE_OK。如果发生了内存分配错误,在*paCol里存NULL，在*pnCol里存0，返回SQLITE_NOMEM
 */
 static int selectColumnsFromExprList(
 	Parse *pParse,          /* Parsing context 解析上下文 */
-	ExprList *pEList,       /* Expr list from which to derive column names 源于列名的Expr列表*/
+	ExprList *pEList,       /* Expr list from which to derive column names 从中派生列名Expr的列表*/
 	int *pnCol,             /* Write the number of columns here 把列的数量写在这里*/
 	Column **paCol          /* Write the new column list here 把新列列表写在这里*/
 	){
-	sqlite3 *db = pParse->db;   /* Database connection 数据库连接*/
+	sqlite3 *db = pParse->db;   /* Database connection 连接数据库*/
 	int i, j;                   /* Loop counters 循环计数器*/
-	int cnt;                    /* Index added to make the name unique 索引的添加使得名字唯一*/
-	Column *aCol, *pCol;        /* For looping over result columns 循环结束得到的结果列*/
+	int cnt;                    /* Index added to make the name unique 添加索引使得名字唯一*/
+	Column *aCol, *pCol;        /* For looping over result columns 在结果列中循环*/
 	int nCol;                   /* Number of columns in the result set 在结果集中的列数*/
 	Expr *p;                    /* Expression for a single result column 一个结果列的表达式*/
 	char *zName;                /* Column name 列名*/
@@ -1512,7 +1512,7 @@ static int selectColumnsFromExprList(
 
 	for (i = 0, pCol = aCol; i < nCol; i++, pCol++){
 		/* Get an appropriate name for the column
-		** 得到一个适当的列的名称
+		** 得到一个列的名称
 		*/
 		p = pEList->a[i].pExpr;
 		assert(p->pRight == 0 || ExprHasProperty(p->pRight, EP_IntValue)
@@ -1524,8 +1524,8 @@ static int selectColumnsFromExprList(
 			zName = sqlite3DbStrDup(db, zName);
 		}
 		else{
-			Expr *pColExpr = p;  /* The expression that is the result column name 结果列名称的表达式*/
-			Table *pTab;         /* Table associated with this expression 与表达式相关的表*/
+			Expr *pColExpr = p;  /* The expression that is the result column name 表达式即是结果列的名称*/
+			Table *pTab;         /* Table associated with this expression 与这个表达式相关的表*/
 			while (pColExpr->op == TK_DOT){
 				pColExpr = pColExpr->pRight;
 				assert(pColExpr != 0);
